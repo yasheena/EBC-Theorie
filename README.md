@@ -26,14 +26,14 @@ reinterpreted as an elastic rebound from a previous contraction phase.
 
 **EBC1 (modified Friedmann):**
 
-$$\left(\frac{\dot{a}}{a}\right)^2 = \frac{8\pi G}{3}\rho + \frac{\Lambda_0}{3}\left(\frac{a_*}{a} - \frac{a}{a_*}\right)$$
+$$\left(\frac{\dot{a}}{a}\right)^2 = \frac{8\pi G}{3}\rho + \frac{\Lambda_0}{3}\left(\frac{a_{*}}{a} - \frac{a}{a_{*}}\right)$$
 
 **Modified cosmological term:**
 
-$$\Lambda_\mathrm{EBC}(a) = \Lambda_0\left(\frac{a_*}{a} - \frac{a}{a_*}\right)$$
+$$\Lambda_\mathrm{EBC}(a) = \Lambda_0\left(\frac{a_{*}}{a} - \frac{a}{a_{*}}\right)$$
 
-where a* is the expansion maximum. At a ≪ a* this gives an effective equation
-of state w₀ = −2/3 (derived from the continuity equation: ρ_EBC ∝ a⁻¹).
+where $a_{*}$ is the expansion maximum. At $a \ll a_{*}$ this gives an effective equation
+of state $w_0 = -2/3$ (derived from the continuity equation: $\rho_\mathrm{EBC} \propto a^{-1}$).
 
 ---
 
@@ -51,7 +51,8 @@ of state w₀ = −2/3 (derived from the continuity equation: ρ_EBC ∝ a⁻¹)
 
 ## Publication
 
-**Zenodo:** [https://doi.org/10.5281/zenodo.19399593](https://doi.org/10.5281/zenodo.19399593)
+**Zenodo:** [https://zenodo.org/records/YOUR-DOI](https://zenodo.org/records/YOUR-DOI)
+*(DOI bitte ersetzen)*
 
 **ORCID:** [0009-0006-9810-7819](https://orcid.org/0009-0006-9810-7819)
 
