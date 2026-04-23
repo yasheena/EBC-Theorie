@@ -51,8 +51,7 @@ of state $w_0 = -2/3$ (derived from the continuity equation: $\rho_\mathrm{EBC} 
 
 ## Publication
 
-**Zenodo:** [https://zenodo.org/records/YOUR-DOI](https://zenodo.org/records/YOUR-DOI)
-*(DOI bitte ersetzen)*
+**Zenodo:** [https://doi.org/10.5281/zenodo.19399593](https://doi.org/10.5281/zenodo.19399593)
 
 **ORCID:** [0009-0006-9810-7819](https://orcid.org/0009-0006-9810-7819)
 
