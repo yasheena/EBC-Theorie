@@ -35,7 +35,7 @@ Was hat der Post gebracht? Nächste Schritte?
 ## Physikerboard.de — EBC-Thread
 
 **Gepostet:** ca. 2026-04-08
-**URL:** *(nicht gespeichert — bitte nachtragen)*
+**URL:** https://www.physikerboard.de/topic,71450,-ebc%3A-ein-hobbykosmologieprojekt-mit-konkreten-vorhersagen.html
 **Status:** ⚠️ gepostet, als "offtopic" markiert
 
 ### Inhalt (Zusammenfassung)
@@ -55,21 +55,27 @@ Reddit r/cosmology (englischsprachig, breitere Fachcommunity).
 
 ---
 
-## Reddit r/cosmology — (geplant)
+## Reddit r/cosmology — Feedback-Anfrage (Meta-Post)
 
-**Gepostet:** —
-**URL:** https://reddit.com/r/cosmology
-**Status:** 🔲 geplant
+**Gepostet:** 2026-04-09 (ca.)
+**URL:** *(bitte die direkte Post-URL aus Reddit einfügen)*
+**Status:** ✅ gepostet — keine Reaktion (Stand: 2026-04-23)
 
-### Inhalt (Entwurf)
-Englischsprachiger Post. Fokus: w₀ = −2/3 als Vorhersage vs. DESI-Messung.
-Meta-Frage nach geeigneten Feedback-Plattformen für unabhängige Forscher.
+### Inhalt (Zusammenfassung)
+Meta-Anfrage: Wo kann ein unabhängiger Forscher ohne akademischen
+Hintergrund seriöses Feedback zu einem Kosmologie-Preprint bekommen?
+Kein direktes EBC-Posting (Regelkonform: keine "personal theories").
+Hinweis auf w₀ = −2/3 und DESI-2024-Konsistenz als Kontext.
 
 ### Reaktionen
-*(ausstehend)*
+- Keine Antworten nach 14 Tagen.
 
 ### Bewertung
-*(ausstehend)*
+Meta-Frage wurde regelkonform gestellt, aber die Community hat nicht
+reagiert — möglicherweise zu unspezifisch oder zu wenig Kontext.
+Nächster Schritt: Direkten inhaltlichen Post zu w₀ = −2/3 vs. DESI
+versuchen, mit explizitem Hinweis auf Zenodo-Preprint. Alternativ
+r/AskPhysics oder r/PhysicsStudents für niedrigschwelligeres Feedback.
 
 ---
 
