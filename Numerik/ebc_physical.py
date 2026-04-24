@@ -3,22 +3,37 @@
 ebc_physical.py — Elastic Bounce Cosmology: Physikalische Integration
 ======================================================================
 Autor : Wolfgang Mattis <ebc@wm0.eu>
-Stand : 2026-04-22
+Stand : 2026-04-23
 
 Integriert die EBC-Gleichungen in dimensionslosen H₀-Einheiten
 (x = a/a₀, τ = H₀·t) mit physikalischen Ω-Werten.
 
 Kerngleichungen
 ---------------
-EBC1 (Friedmann, bestimmt Anfangsbedingungen):
+EBC1 (Friedmann, bestimmt Anfangsbedingungen und Weltalter):
     (ẋ/x)² = Ω_m/x³ + Ω_r/x⁴ + Ω_DE·(1/x − x/x*²)
 
-EBC2 (Bewegungsgleichung, integriert):
+EBC2 (Bewegungsgleichung, integriert für Zyklusdauer und Ratio):
     ẍ = Ω_DE·(1 − x²/x*²) − Ω_m/(2x²) − Ω_r/x³ − γ_eff·|x/x* − 1|·ẋ
 
 Hier ist x* = a*/a₀ = 1/x₀ (x₀ = heutiger Anteil am Zyklus = a₀/a*).
 Ω_DE wird aus der Flachheitsbedingung bei x=1 berechnet:
     Ω_m + Ω_r + Ω_DE·(1 − 1/x*²) = 1
+
+Wichtiger Hinweis zur H₀·t₀-Berechnung
+----------------------------------------
+EBC1 und EBC2 sind wegen des Bianchi-Defekts (offener Punkt, Section 8)
+nicht vollständig konsistent. Für das Weltalter H₀·t₀ ist ausschließlich
+das EBC1-Integral maßgeblich (Funktion h0t0_from_ebc1). Der aus dem
+EBC2-ODE-Solver abgelesene tau_today-Wert ist ein Bianchi-Artefakt und
+wird hier nur zur Diagnose ausgegeben, aber NICHT als H₀·t₀ verwendet.
+
+Gültigkeitsbereiche der Ausgaben:
+  - T_half / T_full (Zyklusdauer):  EBC2-basiert, robust (Artefakt kürzt
+                                     sich im Verhältnis T_mat/T_free weitgehend heraus)
+  - Ratio T_mat/T_free:             EBC2-basiert, zuverlässigste Ausgabe
+  - H₀·t₀ / t₀:                    EBC1-basiert (h0t0_from_ebc1), korrekt
+  - f = t₀/T:                       gemischt: t₀ aus EBC1, T aus EBC2
 """
 
 import numpy as np
@@ -59,6 +74,42 @@ def v_init_from_ebc1(x: float, x_star: float,
     if h2 < 0:
         raise ValueError(f"EBC1 liefert H²<0 bei x={x:.2e} — Parameter inkonsistent.")
     return x * np.sqrt(h2)
+
+
+def h0t0_from_ebc1(x0_frac: float,
+                   om: float = OMEGA_M,
+                   or_: float = OMEGA_R) -> float:
+    """
+    Berechnet H₀·t₀ durch direktes Quadratur-Integral über EBC1.
+
+    Dies ist die physikalisch korrekte Methode für das Weltalter.
+    Der ODE-Solver (EBC2) liefert wegen des Bianchi-Defekts einen
+    abweichenden Wert — dieser darf NICHT als H₀·t₀ verwendet werden.
+
+    Integral:  H₀·t₀ = ∫₀¹ dx / [x · √(Ω_m/x³ + Ω_r/x⁴ + Ω_DE·(1/x − x/x*²))]
+
+    Parameters
+    ----------
+    x0_frac : x₀ = a₀/a* (Zyklusposition heute)
+    om      : Ω_m
+    or_     : Ω_r
+
+    Returns
+    -------
+    H₀·t₀ (dimensionslos)
+    """
+    from scipy.integrate import quad
+    x_star = 1.0 / x0_frac
+    ode = omega_de(x_star, om, or_)
+
+    def integrand(x):
+        h2 = om / x**3 + or_ / x**4 + ode * (1.0/x - x/x_star**2)
+        if h2 <= 0:
+            return 0.0
+        return 1.0 / (x * np.sqrt(h2))
+
+    val, _ = quad(integrand, 1e-8, 1.0, limit=200, epsabs=1e-10)
+    return val
 
 
 def ebc2_rhs(tau: float, state: list,
@@ -288,14 +339,22 @@ def main():
         print(f"  {'Gesamt Halbzyklus':<35}: {r10['T_mat']/2:>7.2f} Gyr")
         print(f"  {'Gesamt Vollzyklus':<35}: {r10['T_mat']:>7.2f} Gyr")
 
-    # ── Vergleich H₀·t₀ ───────────────────────────────────────────────────
-    print("\n── H₀·t₀-Konsistenz ───────────────────────────────────────────────")
+    # ── H₀·t₀ (EBC1-Integral — physikalisch korrekt) ──────────────────────
+    print("\n── H₀·t₀-Konsistenz (EBC1-Integral) ──────────────────────────────")
+    print("   [Maßgeblich für das Weltalter — EBC2-Wert ist Bianchi-Artefakt]")
     H0t0_LCDM = 0.9506
-    if results:
-        H0t0_ebc = np.mean([r["H0t0"] for r in results if not np.isnan(r["H0t0"])])
-        delta = (H0t0_ebc - H0t0_LCDM) / H0t0_LCDM * 100
-        print(f"  ΛCDM:    H₀·t₀ = {H0t0_LCDM:.4f}")
-        print(f"  EBC Ø:   H₀·t₀ = {H0t0_ebc:.4f}  (Δ = {delta:+.1f}%)")
+    print(f"  ΛCDM (Referenz):  H₀·t₀ = {H0t0_LCDM:.4f}  "
+          f"→ t₀ = {H0t0_LCDM * H0_INV_GYR:.2f} Gyr")
+    print()
+    for r in results:
+        x0 = r["x0"]
+        H0t0_ebc1 = h0t0_from_ebc1(x0)
+        H0t0_ebc2 = r["H0t0"]   # Bianchi-Artefakt, nur zur Diagnose
+        delta_ebc1 = (H0t0_ebc1 - H0t0_LCDM) / H0t0_LCDM * 100
+        print(f"  x₀={x0:.2f}:  EBC1 H₀·t₀ = {H0t0_ebc1:.4f}  "
+              f"→ t₀ = {H0t0_ebc1 * H0_INV_GYR:.2f} Gyr  "
+              f"(Δ = {delta_ebc1:+.1f}%)  "
+              f"[EBC2-Artefakt: {H0t0_ebc2:.4f}]")
 
     # ── Plot (optional) ───────────────────────────────────────────────────
     try:
@@ -324,8 +383,8 @@ def main():
         ax2 = axes[1]
         ax2.plot(x0s, ratios, "D-", color="darkorange")
         ax2.axhline(1.0, color="gray", linestyle=":", label="kein Effekt")
-        ax2.fill_between(x0s, [0.75]*len(x0s), [0.85]*len(x0s),
-                         alpha=0.15, color="darkorange", label="Bereich 0.75–0.85")
+        ax2.fill_between(x0s, [0.87]*len(x0s), [0.92]*len(x0s),
+                         alpha=0.15, color="darkorange", label="Bereich 0.87–0.92")
         ax2.set_xlabel("$x_0 = a_0/a_*$")
         ax2.set_ylabel("$T_\\mathrm{Materie}/T_\\mathrm{free}$")
         ax2.set_title("Korrekturfaktor durch Materieinhalt")

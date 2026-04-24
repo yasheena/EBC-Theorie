@@ -2,7 +2,7 @@
 title: EBC Session-Kontext
 status: aktuell
 tags: [EBC, Kontext, Session]
-aktualisiert: 2026-04-22
+aktualisiert: 2026-04-24
 ---
 
 # EBC Session-Kontext — Übergabedokument
@@ -32,8 +32,9 @@ beschreibt. Kernmerkmale:
 - Konsistent mit DESI 2024: w₀ = −0.70 ± 0.10 (1σ)
 - Singularität wird vermieden: elastischer Term wird bei Kompression repulsiv
 
-**Publikation:** DOI: https://doi.org/10.5281/zenodo.19399593, Zenodo-Record: https://zenodo.org/records/19399593, Paper: EBC_paper_v2.md / EBC_paper_v2_DE.md
-Dort auch: englische Originalversion + deutsche Übersetzung als separates File.
+**Publikation:** Zenodo, DOI: https://doi.org/10.5281/zenodo.19399593
+**Aktueller Arbeitstand:** EBC_paper_v3_draft.md (Korrekturen gegenüber
+veröffentlichtem v2 — siehe Abschnitt 7)
 
 ---
 
@@ -41,90 +42,200 @@ Dort auch: englische Originalversion + deutsche Übersetzung als separates File.
 
 In dimensionslosen H₀-Einheiten (x = a/a₀, τ = H₀·t):
 
-**EBC1 (Friedmann):**
+**EBC1 (Friedmann, maßgeblich für Weltalter und BAO-Geometrie):**
 $$\left(\frac{\dot{x}}{x}\right)^2 = \frac{\Omega_m}{x^3} + \frac{\Omega_r}{x^4} + \Omega_{DE}\left(\frac{1}{x} - \frac{x}{x_*^2}\right)$$
 
-**EBC2 (Beschleunigung):**
+**EBC2 (Bewegungsgleichung, maßgeblich für Zyklusdauer und Ratio):**
 $$\ddot{x} = \Omega_{DE}(1 - x^2/x_*^2) - \frac{\Omega_m}{2x^2} - \frac{\Omega_r}{x^3} - \gamma_\mathrm{eff}\,|x/x_* - 1|\,\dot{x}$$
 
 Dabei: x₀ = a₀/a* = aktueller Skalenfaktor / Expansionsmaximum ≈ 0.06–0.15
 
 **Zustandsgleichung (analytisch exakt):**
 $$w_0 = -\frac{2}{3}$$
-(aus Kontinuitätsgleichung: Λ_EBC ∝ 1/a → ρ ∝ a^{−1} → w = −1 − (−1)/3 = −2/3)
+(aus Kontinuitätsgleichung: Λ_EBC ∝ 1/a → ρ ∝ a^{−1} → w = −2/3)
+
+**Ω_DE** aus Flachheitsbedingung bei x = 1:
+$$\Omega_{DE} = \frac{1 - \Omega_m - \Omega_r}{1 - 1/x_*^2}$$
 
 ---
 
-## 4. Bisherige numerische Ergebnisse
+## 4. Methodische Gültigkeitsprüfung
 
-### 4a. Paper-Illustration (dimensionslose Einheiten, ohne Materie)
-- Bounce-Minimum bei x_bounce ≈ 0.515 (illustrativ, nicht physikalisch)
-- x_max ≈ 1.73, Zyklusdauer ΔΤ ≈ 4.87 (dimensionslos)
-- K = 0.527, K_b = 0.005, γ̃ = 1.5×10⁻³
+**Pflichtschritt vor jeder Berechnung:** Prüfen, ob die verwendete Methode
+implizit ΛCDM voraussetzt und ob sie im EBC-Rahmen unverändert gültig ist.
 
-### 4b. Physikalische Integration (H₀-Einheiten, mit Materie/Strahlung)
-Verwendete Werte: Ω_m = 0.315, Ω_r = 9.2×10⁻⁵, Ω_DE = 0.6849, 1/H₀ = 14.51 Gyr
+Viele Standardmethoden der Kosmologie (Altersintegral, BAO-Observablen,
+Distanzmaße, CMB-Physik) sind direkt aus dem ΛCDM-Modell abgeleitet und
+setzen stillschweigend dessen Struktur voraus. EBC weicht an mehreren Punkten
+davon ab. Ohne explizite Prüfung können Ergebnisse systematisch falsch sein.
 
-| x₀   | x*   | T_free [Gyr] | T_Materie [Gyr] | Ratio | f = t₀/T |
-|------|------|-------------|----------------|-------|-----------|
-| 0.06 | 16.7 | 375         | 320            | 0.854 | 4.3%      |
-| 0.08 | 12.5 | 325         | 269            | 0.829 | 5.1%      |
-| 0.10 | 10.0 | 291         | 234            | 0.805 | 5.9%      |
-| 0.13 |  7.7 | 255         | 197            | 0.774 | 7.0%      |
-| 0.15 |  6.7 | 237         | 179            | 0.754 | 7.7%      |
+### 4a. EBC-Besonderheiten und ihre Auswirkungen auf Berechnungen
 
-**Zeitbudget für x₀ = 0.10 (Halbzyklus):**
-- Strahlungsdominiert (x < 3×10⁻⁴): ~0 Gyr (vernachlässigbar)
-- Materiedominiert (3×10⁻⁴ < x < 0.65): 7.76 Gyr
-- Materie-EBC-Übergang (0.65 < x < 1): 5.21 Gyr
-- EBC-dominiert (1 < x < x*): 103.96 Gyr
-- Gesamt Halbzyklus: ~117 Gyr → T ≈ 234 Gyr
+| EBC-Merkmal | Betrifft | Konsequenz |
+|-------------|----------|------------|
+| **Bianchi-Defekt** (EBC1/EBC2-Inkonsistenz) | Weltalter, Zeitintegrale | Altersintegral ausschließlich über EBC1; EBC2-ODE-Wert (H₀·t₀ ≈ 0.766) ist Artefakt |
+| **w₀ = −2/3 ≠ −1** (dynamische DE) | H(z), Distanzmaße, χ²-Fits | H_EBC(z) statt H_ΛCDM(z) verwenden; ΛCDM-H(z) ergibt modellinkonsistente Resultate |
+| **Ω-Werte aus ΛCDM** (Planck 2018) | alle Fits mit freien Parametern | Als Einschränkung dokumentieren; Ergebnisse sind obere Schranken auf Modellspannungen |
+| **τ_ext** (externer Zeitbezug, P3) | Frühuniversum, CMB, Inflation | Standardmethoden aus ΛCDM i.d.R. ungültig; kein formaler EBC-Ersatz hergeleitet — offen kennzeichnen |
+| **r_d (Schallhorizont)** | BAO-Observablen | Gültig solange EBC-Term bei z ≈ 1100 vernachlässigbar; numerisch bestätigt (< 0.0002%) |
+| **Zyklische Geometrie** | Volumenintegrale, Entropie, Thermodynamik | Standardformeln gelten nur im aktuellen Halbzyklus; frühere Zyklen erfordern gesonderte Behandlung |
+| **Keine Inflation ab Zyklus 2** (P7) | Horizont- und Flachheitsproblem | ΛCDM-Inflationsformeln nicht übertragbar; EBC-Argument läuft über Bouncegeometrie |
 
-**H₀·t₀-Konsistenz:**
-- Standard-ΛCDM: H₀·t₀ = 0.9506 ✓
-- EBC (alle x₀): H₀·t₀ ≈ 0.894 (ca. −6% gegenüber ΛCDM)
-→ kleine Spannung, Paper-relevant
+### 4b. Bekannte Prüfergebnisse (dokumentiert)
 
----
+| Berechnung | Methode gültig? | Quelle |
+|------------|----------------|--------|
+| Altersintegral H₀·t₀ über EBC1 | ✅ Ja | Abschnitt 5c, ebc_physical.py |
+| Altersintegral über EBC2-ODE | ❌ Nein (Bianchi-Artefakt) | Abschnitt 5c, ebc_physical.py |
+| Schallhorizont r_d aus Planck 2018 | ✅ Ja (EBC-Term < 0.0002% bei z=1100) | BAO-Check, ebc_bao_fit.py |
+| BAO-Observablen DM/rd, DH/rd | ✅ Ja, wenn H_EBC(z) verwendet | BAO-Check, ebc_bao_fit.py |
+| Ω_m, Ω_r aus Planck | ⚠️ Näherung (kein EBC-eigener Fit) | alle Rechnungen; Ergebnisse als obere Schranke |
+| CMB-Anisotropien, Transferfunktion | ❌ Offen (τ_ext, kein EBC-CMB-Modell) | Paper Section 8 |
+| Primordialspektrum / Inflation | ❌ Nicht übertragbar (P7) | Paper Section 6 |
 
-## 5. Wichtige Korrektur gegenüber Paper-Abschnitt 3.2
+### 4c. Handlungsregel
 
-Das Paper behauptet (Abschnitt 3.2, Formel):
-> T_mit_Materie / T_materefrei ≈ 1.15–1.25 (Materie *verlängert* Zyklus um 15–25%)
+Vor jeder neuen Berechnung:
 
-**Die physikalische Integration zeigt das Gegenteil:**
-Ratio ≈ 0.75–0.85 → Materie *verkürzt* den Zyklus um 15–25%.
-
-**Physikalische Erklärung:** Im frühen Universum (x ≪ 1) dominiert Ω_m/x³
-die Hubble-Rate. Das bedeutet schnellere Expansion, schnellere Durchquerung
-der Frühphase → kürzerer Gesamtzyklus. Der EBC₂-Bremseffekt ist kleiner
-als der EBC₁-Beschleunigungseffekt durch Materie bei kleinen x.
-
-**→ Paper muss in Abschnitt 3.2 korrigiert werden (Priorität 1).**
+1. **Welche physikalische Größe wird berechnet?**
+2. **Setzt die Standardmethode ΛCDM-H(z), ΛCDM-Inflation oder monotone
+   Expansion voraus?**
+3. **Welche EBC-Besonderheiten aus 4a sind betroffen?**
+4. **Falls Methode angepasst oder ungültig: explizit im Output kennzeichnen.**
 
 ---
 
-## 6. Bianchi-Defektterm (theoretisches Problem)
+## 5. Numerische Ergebnisse (physikalische Integration)
 
-Aus der Herleitung (Chat 5329e5ce): Differenziert man EBC1 und vergleicht
-mit EBC2, ergibt sich kein konsistentes ∇_μ T^μν = 0. Der Defektterm:
+Verwendete Werte: Ω_m = 0.315, Ω_r = 9.2×10⁻⁵, 1/H₀ = 14.51 Gyr
+
+### 4a. Halbzyklus-Zeiten
+
+| x₀   | x*   | T_free [Gyr] | T_mat [Gyr] | Ratio | f = t₀/T |
+|------|------|-------------|------------|-------|-----------|
+| 0.06 | 16.7 | 349         | 320        | 0.917 | 4.3%      |
+| 0.08 | 12.5 | 301         | 273        | 0.904 | 5.1%      |
+| 0.10 | 10.0 | 269         | 240        | 0.893 | 5.7%      |
+| 0.13 |  7.7 | 235         | 207        | 0.878 | 6.7%      |
+| 0.15 |  6.7 | 218         | 190        | 0.869 | 7.3%      |
+
+T_free: EBC ohne Materie/Strahlung. T_mat: physikalisch mit Ω_m, Ω_r.
+Ratio = T_mat/T_free. Materie *verkürzt* den Zyklus um 8–13%.
+**Zyklusdauer und Ratio: EBC2-basiert, robust.**
+**f = t₀/T: gemischt — t₀ aus EBC1 (korrekt), T aus EBC2.**
+
+### 4b. Zeitbudget für x₀ = 0.10 (Halbzyklus)
+
+| Phase                              | Dauer [Gyr] |
+|------------------------------------|-------------|
+| Strahlungsdominiert (x < 3×10⁻⁴)  | ~0.0        |
+| Materiedominiert (3×10⁻⁴ < x < 0.65) | ~7.0     |
+| Materie-EBC-Übergang (0.65 < x < 1)  | ~4.1     |
+| EBC-dominiert (1 < x < x*)         | ~109        |
+| **Gesamt Halbzyklus**              | **~120 Gyr**|
+
+### 4c. H₀·t₀-Konsistenz
+
+**Maßgebliche Berechnung: EBC1-Integral** (nicht ODE-Solver):
+
+$$H_0 \cdot t_0^{(EBC)} = \int_0^1 \frac{dx}{x\,\sqrt{\Omega_m/x^3 + \Omega_r/x^4 + \Omega_{DE}(1/x - x/x_*^2)}} \approx 0.893$$
+
+→ Bei H₀ = 67.4 km/s/Mpc: t₀ ≈ 12.95 Gyr (−6.1% vs. ΛCDM-Referenz)
+→ Bei H₀ = 63.4 km/s/Mpc (BAO-Fit): t₀ ≈ 13.8 Gyr ✓ (siehe Abschnitt 7)
+
+**Bianchi-Artefakt:** Der ODE-Solver (EBC2) liefert H₀·t₀ ≈ 0.766 (−19.5%).
+Dieser Wert darf NICHT als Weltalter verwendet werden. Er ist in
+`ebc_physical.py` als Artefakt dokumentiert und nur zur Diagnose ausgegeben.
+
+---
+
+## 6. Korrekturen v2 → v3 (erledigt)
+
+| Stelle | v2 (falsch) | v3 (korrekt) |
+|--------|-------------|--------------|
+| Section 3.2: Materie-Effekt | verlängert Zyklus +15–25% | verkürzt Zyklus −8–13% |
+| Section 3.2: T-Bereich | 105–290 Gyr | 190–320 Gyr |
+| Section 3.2: f = t₀/T | 5–13% | 4–7% |
+| Section 3.2: H₀·t₀ | nicht vorhanden | 0.893 / −6% (obere Schranke) |
+| Abstract: T-Bereich | 105–290 Gyr | 190–320 Gyr |
+| Section 4.1: Zyklusposition | 5–13% | 4–7% |
+| Section 8: Item 3 | analytische Schätzung ausstehend | numerische Ergebnisse eingetragen |
+| Section 8: Item 3a | nicht vorhanden | BAO-Check abgeschlossen (s. Abschnitt 7) |
+
+Korrekturprotokoll: `Paper/EBC_paper_v2_Korrektur_3_2.md`
+
+---
+
+## 7. BAO-Geometrie-Check (abgeschlossen 2026-04-24)
+
+**Skript:** `Numerik/ebc_bao_fit.py`
+**Plot:** `Numerik/Ergebnisse/ebc_bao_fit.png`
+**Vollständige Ergebnisse:** `Erweiterungen/EBC_BAO_Check_Ergebnisse.md`
+
+### Methode
+
+Fit von H_EBC(z) gegen DESI DR1 BAO-Daten (arXiv:2404.03002, Tabelle 1;
+7 Rotverschiebungsbins, 12 Datenpunkte) mit H₀ als einzigem freien Parameter.
+Analytische χ²-Minimierung (alle Observablen ∝ 1/H₀).
+Kovarianzmatrizen der korrelierten DM/rd- und DH/rd-Messungen berücksichtigt.
+
+### Voraussetzung bestätigt: r_d gültig
+
+EBC-Term bei z = 1100: < 0.0002% der Gesamtdichte.
+→ r_d = 147.09 Mpc (Planck 2018) unverändert gültig in EBC.
+
+### Fit-Ergebnisse
+
+| Modell | H₀ [km/s/Mpc] | σ_H₀ | χ²/dof | H₀·t₀ | t₀ [Gyr] |
+|--------|-----:|-----:|-----:|-----:|-----:|
+| EBC x₀=0.06 | **63.37** | 0.30 | 2.040 | 0.893 | 13.79 |
+| EBC x₀=0.10 | **63.32** | 0.30 | 2.047 | 0.893 | 13.79 |
+| EBC x₀=0.15 | **63.24** | 0.30 | 2.061 | 0.891 | 13.79 |
+| ΛCDM (Referenz) | **68.17** | 0.32 | 1.335 | 0.951 | 13.64 |
+
+### Interpretation
+
+**Positiv:**
+- t₀-Spannung weitgehend aufgelöst: Bei H₀_EBC = 63.4 km/s/Mpc ergibt
+  das EBC1-Altersintegral t₀ = 13.8 Gyr — ohne Konflikt mit Beobachtungen.
+- H₀-Vorhersage stabil über alle x₀ (Variation < 0.2 km/s/Mpc).
+- r_d-Annahme vollständig bestätigt.
+
+**Kritisch (offen kommunizieren):**
+- χ²/dof = 2.04 vs. ΛCDM 1.33 — EBC passt BAO-Geometrie statistisch
+  schlechter an (~2.7σ Rückstand gegenüber ΛCDM).
+- Größte Residuen bei z = 0.706 (ΔDM/σ = +2.50) und z = 0.930
+  (ΔDH/σ = −2.59) — genau im EBC-Übergangsbereich Materie→EBC-Dominanz.
+- H₀_EBC ≈ 63.4 km/s/Mpc verschlechtert die Hubble-Spannung statt sie
+  zu mildern (liegt noch weiter unter dem Planck-Wert 67.4).
+
+**Einschränkung:** Ω_m = 0.315 aus Planck/ΛCDM festgehalten.
+Ein selbstkonsistenter Fit mit freiem Ω_m könnte die Residuen verändern
+— dies ist der identifizierte nächste Entwicklungsschritt.
+
+### Paper-Text für Section 8 Item 3a (bereit)
+
+In `Erweiterungen/EBC_BAO_Check_Ergebnisse.md` enthalten.
+
+---
+
+## 8. Bianchi-Defektterm (offenes theoretisches Problem)
 
 $$\dot{\rho} + 3H(\rho+p) = \underbrace{-\frac{\dot{\Lambda}_{EBC} + \dot{\Lambda}_b}{8\pi G}}_{D_\Lambda} \underbrace{-\frac{3\gamma(a)H^2}{4\pi G}}_{D_\gamma}$$
 
 - **D_Λ**: lösbar — analog Quintessenz (effektives Skalarfeld)
-- **D_γ**: offen — kein Standardmechanismus für Energiefluss in Raumzeit
-  (berührt thermodynamische Gravitation: Jacobson, Verlinde)
+- **D_γ**: offen — kein Standardmechanismus bekannt
 
-Diese Frage wurde an Prof. Brandenberger (McGill) und Prof. Steinhardt
-(Princeton) gesendet. Bislang keine Antwort.
+Kontakt: Prof. Brandenberger (McGill), Prof. Steinhardt (Princeton) —
+bislang keine Antwort.
 
 ---
 
-## 7. Outreach-Status
+## 9. Outreach-Status
 
 | Kanal                   | Status                            |
 |-------------------------|-----------------------------------|
-| Zenodo (EN)             | ✅ veröffentlicht                 |
+| Zenodo (EN)             | ✅ veröffentlicht (v2)            |
 | Zenodo (DE)             | ✅ hinzugefügt                    |
 | Physikerboard.de        | ⚠️ gepostet, als "offtopic" markiert |
 | Prof. Brandenberger     | 📤 gesendet, keine Antwort        |
@@ -134,43 +245,61 @@ Diese Frage wurde an Prof. Brandenberger (McGill) und Prof. Steinhardt
 
 ---
 
-## 8. Offene Punkte / nächste Schritte
+## 10. Offene Punkte / nächste Schritte
 
-**Sofort (Paper-Korrekturen):**
-1. Abschnitt 3.2 korrigieren: Ratio 0.75–0.85 statt 1.15–1.25
-2. Quantitative Tabelle (Abschnitt 4b) ins Paper einfügen
-3. H₀·t₀-Spannung (~6%) als Diskussionspunkt ergänzen
-4. Offener Punkt 3 in Section 8 als erledigt markieren
+**Priorität 1 — nächster Chat:**
+BAO-Fit mit freiem Ω_m (zwei freie Parameter: H₀, Ω_m).
+Ziel: Klären ob EBC mit selbstkonsistentem Ω_m die Residuen bei
+z ≈ 0.7–0.93 schließen kann, oder ob die Abweichung strukturell ist.
+Volle Kovarianz-Behandlung beibehalten.
+Hochladen: EBC_paper_v3_draft.md + dieser Kontext + ebc_bao_fit.py
 
-**Mittelfristig:**
-5. ebc_physical.py neu erstellen und validieren (Session-Absturz)
-6. Abbildung aus physikalischer Integration als neue Figure ins Paper
-7. Reddit-Post verfassen
-8. Bianchi-Defektterm: theoretische Ausarbeitung
+**Priorität 2 — mittelfristig:**
+- Paper v3 fertigstellen: Section 8 Item 3a mit BAO-Ergebnissen eintragen
+- Neue Figure aus ebc_physical.py und ebc_bao_fit.py für v3
+- Reddit-Post verfassen (Fokus: w₀ = −2/3 Vorhersage, ehrliche BAO-Diskussion)
 
-**Langfristig:**
-9. Schwarze-Loch-Erweiterung (τ_ext-Paper)
-10. Verknüpfung EBC ↔ Buch "Perfect Universe" / Gedankenspieler
+**Priorität 3 — langfristig:**
+- Bianchi-Defektterm: theoretische Ausarbeitung
+- Schwarze-Loch-Erweiterung (τ_ext-Paper)
+- Vollständiger CMB-Fit (eigenständiges Paper)
 
----
-
-## 9. Dateien im Vault (EBC-Theorie/)
-
-| Datei                          | Ort                    | Status     |
-|-------------------------------|------------------------|------------|
-| EBC_paper_v2.md               | Paper/                 | ✅ aktuell |
-| EBC_paper_v2_DE.md            | Paper/                 | ✅ aktuell |
-| ebc_physical.py               | Numerik/               | ⚠️ neu erstellen |
-| Session-Kontext.md (diese)    | Kontext/               | ✅ aktuell |
-| Offene-Punkte.md              | —                      | 🔲 anlegen |
-| Emails.md                     | Outreach/              | 🔲 anlegen |
-| Foren.md                      | Outreach/              | 🔲 anlegen |
-| Changelog.md                  | Paper/                 | 🔲 später  |
+Detaillierte Liste: `Erweiterungen/Offene-Punkte.md`
 
 ---
 
-## 10. Wie neue Sessions starten
+## 11. Dateien im Vault (EBC-Theorie/)
 
-1. Diese Datei + EBC_paper_v2.md + ebc_physical.py hochladen
-2. Einstieg: *"Wir setzen EBC-Arbeit fort — Kontext in hochgeladenen Dateien."*
-3. Erstes Ziel benennen (z.B. "Paper Abschnitt 3.2 korrigieren")
+| Datei                              | Ort                  | Status           |
+|-----------------------------------|----------------------|------------------|
+| EBC_paper_v2.md                   | Paper/               | ✅ eingefroren (Zenodo) |
+| EBC_paper_v2_DE.md                | Paper/               | ✅ eingefroren (Zenodo) |
+| EBC_paper_v3_draft.md             | Paper/               | ✅ aktueller Arbeitsstand |
+| EBC_paper_v2_Korrektur_3_2.md     | Paper/               | ✅ Korrekturprotokoll |
+| Changelog.md                      | Paper/               | ✅ aktuell       |
+| ebc_physical.py                   | Numerik/             | ✅ aktuell (korrigiert 2026-04-23) |
+| ebc_bao_fit.py                    | Numerik/             | ✅ neu (2026-04-24) |
+| EBC_v2_figures_source.py          | Figures/             | ✅ eingefroren   |
+| EBC_v3_figures_source.py          | Figures/             | ✅ aktuell       |
+| EBC_v2_fig1a/b.svg                | Figures/             | ✅ vorhanden     |
+| EBC_v2_fig1a/b_final.svg/pdf      | Figures/             | ✅ vorhanden     |
+| ebc_physical_results.png          | Numerik/Ergebnisse/  | ✅ vorhanden     |
+| ebc_bao_fit.png                   | Numerik/Ergebnisse/  | ✅ neu (2026-04-24) |
+| EBC_BAO_Check_Ergebnisse.md       | Erweiterungen/       | ✅ neu (2026-04-24) |
+| EBC_pandoc_template.tex           | Build/               | ✅ vorhanden     |
+| create_pdf.bat                    | Build/               | ✅ aktualisiert  |
+| BUILD.md                          | Build/               | ✅ aktuell       |
+| Offene-Punkte.md                  | Erweiterungen/       | ✅ aktuell       |
+| EBC-Session-Kontext.md            | Kontext/             | ✅ diese Datei   |
+
+---
+
+## 12. Wie neue Sessions starten
+
+1. Diese Datei + EBC_paper_v3_draft.md hochladen
+2. ebc_bao_fit.py hochladen (für BAO-Fortsetzung)
+3. ggf. ebc_physical.py hochladen (für numerische Fortsetzungen)
+4. Einstieg: *"Wir setzen EBC-Arbeit fort — Kontext in hochgeladenen Dateien."*
+5. Erstes Ziel benennen
+
+**Nächstes Ziel:** BAO-Fit mit freiem Ω_m (zwei Parameter: H₀, Ω_m).
