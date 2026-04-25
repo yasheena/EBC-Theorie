@@ -2,7 +2,7 @@
 title: EBC Session-Kontext
 status: aktuell
 tags: [EBC, Kontext, Session]
-aktualisiert: 2026-04-24
+aktualisiert: 2026-04-24 (abends — nach 3-Par-Fit + Paper v3)
 ---
 
 # EBC Session-Kontext — Übergabedokument
@@ -32,9 +32,9 @@ beschreibt. Kernmerkmale:
 - Konsistent mit DESI 2024: w₀ = −0.70 ± 0.10 (1σ)
 - Singularität wird vermieden: elastischer Term wird bei Kompression repulsiv
 
-**Publikation:** Zenodo, DOI: https://doi.org/10.5281/zenodo.19399593
-**Aktueller Arbeitstand:** EBC_paper_v3_draft.md (Korrekturen gegenüber
-veröffentlichtem v2 — siehe Abschnitt 7)
+**Publikation:** Zenodo v2, DOI: https://doi.org/10.5281/zenodo.19399593
+**Aktueller Arbeitstand:** EBC_paper_v3.md (Patches applied, noch nicht
+veröffentlicht — Pre-Publication-Review steht aus).
 
 ---
 
@@ -57,6 +57,11 @@ $$w_0 = -\frac{2}{3}$$
 **Ω_DE** aus Flachheitsbedingung bei x = 1:
 $$\Omega_{DE} = \frac{1 - \Omega_m - \Omega_r}{1 - 1/x_*^2}$$
 
+**Schallhorizont r_d (Aubourg 2015, Eq. 16):**
+$$r_d = \frac{55.154 \cdot \exp[-72.3\,(\Omega_\nu h^2 + 0.0006)^2]}{(\Omega_m h^2)^{0.25351} \cdot (\Omega_b h^2)^{0.12807}}\ \mathrm{Mpc}$$
+
+Gültig in EBC, da Λ_EBC bei z_drag ≈ 1060 < 0.0002 % von H² beiträgt.
+
 ---
 
 ## 4. Methodische Gültigkeitsprüfung
@@ -72,10 +77,10 @@ implizit ΛCDM voraussetzt und ob sie im EBC-Rahmen unverändert gültig ist.
 | **w₀ = −2/3 ≠ −1** (dynamische DE) | H(z), Distanzmaße, χ²-Fits | H_EBC(z) statt H_ΛCDM(z) verwenden |
 | **Ω-Werte aus ΛCDM** (Planck 2018) | alle Fits mit freien Parametern | Als Einschränkung dokumentieren |
 | **τ_ext** (externer Zeitbezug, P3) | Frühuniversum, CMB, Inflation | Standardmethoden i.d.R. ungültig — offen kennzeichnen |
-| **r_d (Schallhorizont)** | BAO-Observablen | Gültig solange EBC-Term bei z ≈ 1100 vernachlässigbar; numerisch bestätigt (< 0.0002%) |
-| **r_d Kopplung an Ω_m** | 2-Par-Fit | r_d = r_d(Ω_m, h²) — bei variablem Ω_m ideell mitzufitten; festgehaltenes r_d macht Ergebnisse zur oberen Schranke |
+| **r_d (Schallhorizont)** | BAO-Observablen | Gültig via Aubourg bei EBC, solange EBC-Term bei z ≈ 1100 vernachlässigbar (< 0.0002 % verifiziert) |
 | **Zyklische Geometrie** | Volumenintegrale, Entropie | Standardformeln gelten nur im aktuellen Halbzyklus |
 | **Keine Inflation ab Zyklus 2** (P7) | Horizont- und Flachheitsproblem | ΛCDM-Inflationsformeln nicht übertragbar |
+| **Hubble-Spannung** | alle H₀-Bestimmungen | EBC löst die Spannung nicht (w₀>−1 modifiziert nur spätes Universum) |
 
 ### 4b. Bekannte Prüfergebnisse (dokumentiert)
 
@@ -83,120 +88,80 @@ implizit ΛCDM voraussetzt und ob sie im EBC-Rahmen unverändert gültig ist.
 |------------|----------------|--------|
 | Altersintegral H₀·t₀ über EBC1 | ✅ Ja | ebc_physical.py |
 | Altersintegral über EBC2-ODE | ❌ Nein (Bianchi-Artefakt) | ebc_physical.py |
-| Schallhorizont r_d aus Planck 2018 | ✅ Ja (EBC-Term < 0.0002% bei z=1100) | ebc_bao_fit.py |
-| BAO-Observablen DM/rd, DH/rd | ✅ Ja, wenn H_EBC(z) verwendet | ebc_bao_fit.py |
+| Schallhorizont r_d aus Planck 2018 / Aubourg | ✅ Ja (EBC-Term < 0.0002% bei z=1100) | ebc_bao_fit3.py |
+| BAO-Observablen DM/rd, DH/rd | ✅ Ja, wenn H_EBC(z) verwendet | ebc_bao_fit3.py |
 | 1-Par-Fit (H₀, Ω_m=0.315 fest) | ✅ Ja (Ω_m als Einschränkung) | ebc_bao_fit.py |
-| 2-Par-Fit (H₀, Ω_m frei, r_d fest) | ⚠️ Obere Schranke (r_d-Kopplung ignoriert) | ebc_bao_fit2.py |
-| 3-Par-Fit (H₀, Ω_m, r_d selbstkonsistent) | 🔲 Offen — nächster Entwicklungsschritt | — |
+| 2-Par-Fit (H₀, Ω_m frei, r_d=147.09 fest) | ⚠️ Obere Schranke (r_d-Kopplung ignoriert) | ebc_bao_fit2.py |
+| 3-Par-Fit (H₀, Ω_m, r_d via Aubourg selbstkonsistent) | ✅ Ja | ebc_bao_fit3.py |
+| Joint BAO + SNe Ia + CMB θ_* | 🔲 Offen — nächster Entwicklungsschritt | — |
 | CMB-Anisotropien, Transferfunktion | ❌ Offen (τ_ext, kein EBC-CMB-Modell) | Paper Section 8 |
 | Primordialspektrum / Inflation | ❌ Nicht übertragbar (P7) | Paper Section 6 |
 
-### 4c. Handlungsregel
-
-Vor jeder neuen Berechnung:
-
-1. **Welche physikalische Größe wird berechnet?**
-2. **Setzt die Standardmethode ΛCDM-H(z), ΛCDM-Inflation oder monotone Expansion voraus?**
-3. **Welche EBC-Besonderheiten aus 4a sind betroffen?**
-4. **Falls Methode angepasst oder ungültig: explizit im Output kennzeichnen.**
-
 ---
 
-## 5. Numerische Ergebnisse (physikalische Integration)
+## 5. Numerische Ergebnisse (Stand 2026-04-24 abends)
 
-Verwendete Werte: Ω_m = 0.315, Ω_r = 9.2×10⁻⁵, 1/H₀ = 14.51 Gyr
+Verwendete Werte: Ω_m = 0.315 (Planck) bzw. freie Variable, Ω_r = 9.2×10⁻⁵,
+1/H₀ = 14.51 Gyr bei H₀ = 67.4, KM_TO_GYR = 978.5.
 
 ### 5a. Halbzyklus-Zeiten
 
 | x₀   | x*   | T_free [Gyr] | T_mat [Gyr] | Ratio | f = t₀/T |
 |------|------|-------------|------------|-------|-----------|
 | 0.06 | 16.7 | 349         | 320        | 0.917 | 4.3%      |
-| 0.08 | 12.5 | 301         | 273        | 0.904 | 5.1%      |
 | 0.10 | 10.0 | 269         | 240        | 0.893 | 5.7%      |
-| 0.13 |  7.7 | 235         | 207        | 0.878 | 6.7%      |
 | 0.15 |  6.7 | 218         | 190        | 0.869 | 7.3%      |
 
-### 5b. H₀·t₀-Konsistenz
+### 5b. BAO-Fits (DESI Y1, 12 Datenpunkte, mit DM/DH-Kovarianz)
 
-**Maßgebliche Berechnung: EBC1-Integral:**
+| Fit-Typ | Modell | Ω_m | H₀ | r_d [Mpc] | χ²/dof | t₀ [Gyr] |
+|---|---|---:|---:|---:|---:|---:|
+| **1-Par** (Ω_m=0.315 fest) | EBC x₀=0.06 | 0.315 | 63.37 | 147.09 | 2.040 | 13.79 |
+| 1-Par | ΛCDM | 0.315 | 68.17 | 147.09 | 1.335 | 13.64 |
+| **2-Par** (r_d=147.09 fest) | EBC x₀=0.06 | 0.283 | 64.48 | 147.09 | 1.869 | 13.87 |
+| 2-Par | ΛCDM | 0.293 | 69.32 | 147.09 | 1.281 | 13.69 |
+| **3-Par** (r_d Aubourg, self-consistent) | EBC x₀=0.06 | 0.282 | **58.46** | **162.31** | 1.869 | **15.31** |
+| 3-Par | ΛCDM | 0.294 | 68.99 | 147.67 | 1.280 | 13.74 |
 
-$$H_0 \cdot t_0^{(EBC)} = \int_0^1 \frac{dx}{x\,\sqrt{\Omega_m/x^3 + \Omega_r/x^4 + \Omega_{DE}(1/x - x/x_*^2)}} \approx 0.893$$
+**Kernbefund 3-Par-Fit:**
+- χ² identisch zu 2-Par (die Verbesserung kam aus Ω_m-Freiheit, nicht aus r_d-Entkopplung)
+- (H₀, r_d)-Degeneration in reinen BAO-Daten — Aufbrechen erfordert SNe Ia oder CMB θ_*
+- Hubble-Spannung von EBC **nicht gelöst**, sondern leicht verschärft (58.5 vs. SH0ES 73)
+- Weltalter t₀ ≈ 15.3 Gyr komfortabel mit Kugelsternhaufen konsistent
+- Residuen robust: LRG2 (z=0.706, DM: +2.06σ), LRG3+ELG1 (z=0.930, DH: −2.27σ)
 
-→ Bei H₀ = 67.4 km/s/Mpc: t₀ ≈ 12.95 Gyr (−6.1% vs. ΛCDM-Referenz)
-→ Bei H₀ = 63.4 km/s/Mpc (BAO-1-Par-Fit): t₀ ≈ 13.8 Gyr ✓
-
-**Bianchi-Artefakt:** ODE-Solver (EBC2) liefert H₀·t₀ ≈ 0.766 — nicht als Weltalter verwenden.
-
----
-
-## 6. Korrekturen v2 → v3 (erledigt)
-
-| Stelle | v2 (falsch) | v3 (korrekt) |
-|--------|-------------|--------------|
-| Section 3.2: Materie-Effekt | verlängert Zyklus +15–25% | verkürzt Zyklus −8–13% |
-| Section 3.2: T-Bereich | 105–290 Gyr | 190–320 Gyr |
-| Section 3.2: f = t₀/T | 5–13% | 4–7% |
-| Section 3.2: H₀·t₀ | nicht vorhanden | 0.893 / −6% (obere Schranke) |
-| Abstract: T-Bereich | 105–290 Gyr | 190–320 Gyr |
-| Section 4.1: Zyklusposition | 5–13% | 4–7% |
-| Section 8: Item 3 | analytische Schätzung ausstehend | numerische Ergebnisse eingetragen |
-| Section 8: Item 3a | nicht vorhanden | BAO-1-Par-Check abgeschlossen |
-| Section 8: Item 3b | nicht vorhanden | BAO-2-Par-Fit abgeschlossen |
+**Ω_b h² mit BBN-Prior frei:** liefert identische Ergebnisse (BAO allein
+ist nicht sensitiv auf Ω_b getrennt von r_d).
 
 ---
 
-## 7. BAO-Geometrie-Checks (abgeschlossen 2026-04-24)
+## 6. Paper-Entwicklungsstand
 
-### 7a. 1-Parameter-Fit (H₀, Ω_m = 0.315 fest)
+### v2 (veröffentlicht auf Zenodo)
 
-**Skript:** `Numerik/ebc_bao_fit.py`
+DOI: https://doi.org/10.5281/zenodo.19399593 (EN + DE)
 
-| Modell | H₀ [km/s/Mpc] | χ²/dof | t₀ [Gyr] |
-|--------|-----:|-----:|-----:|
-| EBC x₀=0.06 | 63.37 | 2.040 | 13.79 |
-| EBC x₀=0.10 | 63.32 | 2.047 | 13.79 |
-| EBC x₀=0.15 | 63.24 | 2.061 | 13.79 |
-| ΛCDM (Ref.) | 68.17 | 1.335 | 13.64 |
+### v3 (lokal, Patches angewendet 2026-04-24)
 
-Größte Residuen: LRG2 z=0.706 (+2.50σ DM), LRG3+ELG1 z=0.930 (−2.59σ DH).
+Alle vier inhaltlichen Patches aus EBC_paper_v3_patches.md auf
+EBC_paper_v3_draft.md angewendet. Ergebnis: EBC_paper_v3.md (623 Zeilen).
 
-### 7b. 2-Parameter-Fit (H₀, Ω_m frei; r_d = 147.09 Mpc festgehalten)
+**Geänderte Abschnitte:**
+1. **Abstract** — "5–15%" → "4–7%" korrigiert; Hubble-Spannung ehrlich eingeordnet
+2. **Section 3.2, H₀·t₀-Block** — 6%-Deficit-Narrativ durch self-consistent-Diskussion ersetzt
+3. **Section 4.2 (Hubble Tension)** — Komplett-Neuschrieb: EBC löst die Spannung nicht
+4. **Section 8, Item 3** — aus Absichtserklärung wurden vier Items:
+   - 3a: 1-Par-Fit Ergebnisse
+   - 3b: 2-Par-Fit Ergebnisse (mit Caveat fixes r_d)
+   - 3c: 3-Par-Fit Ergebnisse (self-consistent)
+   - 3d: Joint-Fit BAO + SNe + CMB θ_* (als nächster Schritt deklariert)
 
-**Skript:** `Numerik/ebc_bao_fit2.py`  
-**Einschränkung:** r_d bei variablem Ω_m ideell über Aubourg-Formel mitzufitten.
-Ergebnisse sind obere Schranken auf die Modellspannung.
-
-| Modell | Ω_m | H₀ [km/s/Mpc] | χ²/dof | Δχ² | ΔAIC | t₀ [Gyr] |
-|--------|-----|-----:|-----:|-----:|-----:|-----:|
-| EBC x₀=0.06 | **0.283** | **64.48** | **1.869** | −3.76 | **−1.76** | 13.87 |
-| EBC x₀=0.10 | **0.283** | **64.43** | **1.879** | −3.73 | −1.73 | 13.87 |
-| EBC x₀=0.15 | **0.283** | **64.33** | **1.900** | −3.68 | −1.68 | 13.88 |
-| ΛCDM (Ref.) | 0.293 | 69.32 | 1.281 | −1.88 | +0.12 | 13.69 |
-
-dof = 10 (12 Datenpunkte − 2 freie Parameter)  
-Ω_m-Profil-Konfidenzintervall (Δχ²<1): EBC → [0.268, 0.298]; ΛCDM → [0.281, 0.308]
-
-**Residuen EBC x₀=0.06 (Ω_m=0.283, H₀=64.48):**
-
-| Tracer | z | DM/σ | DH/σ |
-|--------|---|------|------|
-| LRG1 | 0.510 | −0.68σ | +1.71σ |
-| LRG2 | 0.706 | **+2.06σ** | −1.00σ |
-| LRG3+ELG1 | 0.930 | −0.40σ | **−2.28σ** |
-| ELG2 | 1.317 | −0.34σ | +0.13σ |
-| Lya | 2.330 | −1.03σ | +1.73σ |
-| BGS | 0.295 | — | +0.90σ (DV) |
-| QSO | 1.491 | — | −0.59σ (DV) |
-
-**Interpretation:**
-- EBC profitiert stärker vom freien Ω_m als ΛCDM (ΔAIC_EBC = −1.76 vs. ΔAIC_ΛCDM = +0.12)
-- EBC-bevorzugtes Ω_m = 0.283 liegt unter Planck (0.315) und DESI (0.295)
-- Strukturelle Residuen im Übergangsbereich z≈0.7–0.93 reduziert aber nicht beseitigt
-- χ²-Rückstand EBC vs. ΛCDM: Δχ²_min = 5.88 (~2.4σ) — strukturell, nicht parametrisch
+**Status vor Zenodo-Publikation:** Pre-Publication-Review steht aus —
+komplettes Paper mit Claude als Reviewer noch einmal durchgehen.
 
 ---
 
-## 8. Bianchi-Defektterm (offenes theoretisches Problem)
+## 7. Bianchi-Defektterm (offenes theoretisches Problem)
 
 $$\dot{\rho} + 3H(\rho+p) = \underbrace{-\frac{\dot{\Lambda}_{EBC} + \dot{\Lambda}_b}{8\pi G}}_{D_\Lambda} \underbrace{-\frac{3\gamma(a)H^2}{4\pi G}}_{D_\gamma}$$
 
@@ -207,12 +172,13 @@ Kontakt: Prof. Brandenberger (McGill), Prof. Steinhardt (Princeton) — bislang 
 
 ---
 
-## 9. Outreach-Status
+## 8. Outreach-Status
 
 | Kanal | Status |
 |---|---|
 | Zenodo (EN) | ✅ veröffentlicht (v2) |
-| Zenodo (DE) | ✅ hinzugefügt |
+| Zenodo (DE) | ✅ hinzugefügt (v2) |
+| Zenodo (v3) | 🔲 geplant (nach Review) |
 | Physikerboard.de | ⚠️ gepostet, als "offtopic" markiert |
 | Prof. Brandenberger | 📤 gesendet, keine Antwort |
 | Prof. Steinhardt | 📤 gesendet, keine Antwort |
@@ -221,52 +187,69 @@ Kontakt: Prof. Brandenberger (McGill), Prof. Steinhardt (Princeton) — bislang 
 
 ---
 
-## 10. Offene Punkte / nächste Schritte
+## 9. Offene Punkte / nächste Schritte
 
-**Priorität 1 — nächster Chat:**
-3-Parameter-Fit (H₀, Ω_m, r_d) mit Aubourg-Formel r_d(Ω_m, h²).
-Selbstkonsistente Behandlung der r_d/Ω_m-Kopplung.
-Erwartet: EBC-Ω_m-Minimum verschiebt sich, χ²-Bild ändert sich.
-Hochladen: EBC_paper_v3_draft.md + dieser Kontext + ebc_bao_fit2.py
+**Priorität 1 — aktuelles Ziel (neuer Chat):**
+**Joint-Fit BAO + SNe Ia + CMB θ_* (Item 3d konkretisieren)**
+- Bricht die (H₀, r_d)-Degeneration aus 3c
+- Pantheon+ oder Union3 für SNe; CMB θ_* als Prior aus Planck
+- Erwartung: EBC-H₀ zwischen ~58 und ~65, mit engen Fehlerbalken
+- Liefert neues Section-8-Item für Paper v3 (Erweiterung oder v3.1)
+- Datenquellen klären: Pantheon+ = pantheonplussh0es.github.io; Planck θ_* = 100·θ_* = 1.04109±0.00030
 
-**Priorität 2 — mittelfristig:**
-- Paper v3 fertigstellen: Section 8 Items 3a+3b eintragen
-- Section 8 Item 3b Paper-Text aus ebc_bao_fit2.py einarbeiten
-- Reddit-Post verfassen (Fokus: w₀ = −2/3, ehrliche BAO-Diskussion)
+**Priorität 2 — nach Joint-Fit:**
+- Pre-Publication-Review des vollständigen EBC_paper_v3.md
+- Dann Zenodo v3 publizieren
+- Changelog v2 → v3 schreiben
 
-**Priorität 3 — langfristig:**
+**Priorität 3 — mittelfristig:**
+- Reddit-Post verfassen (Fokus: w₀ = −2/3, ehrliche BAO-Diskussion inkl. H₀-Frage)
 - Bianchi-Defektterm: theoretische Ausarbeitung
-- Schwarze-Loch-Erweiterung (τ_ext-Paper)
-- Vollständiger CMB-Fit (eigenständiges Paper)
+- Schwarze-Loch-Erweiterung (τ_ext-Paper): Motivation *nicht* über Merger-Dynamik, sondern über Singularitätsvermeidung im Inneren; Anschluss an Rovelli/Ashtekar (Planck stars, LQG)
 
 ---
 
-## 11. Dateien im Vault (EBC-Theorie/)
+## 10. Dateien im Vault (EBC-Theorie/)
 
 | Datei | Ort | Status |
 |-------|-----|--------|
 | EBC_paper_v2.md | Paper/ | ✅ eingefroren (Zenodo) |
 | EBC_paper_v2_DE.md | Paper/ | ✅ eingefroren (Zenodo) |
-| EBC_paper_v3_draft.md | Paper/ | ✅ aktueller Arbeitsstand |
-| EBC_paper_v2_Korrektur_3_2.md | Paper/ | ✅ Korrekturprotokoll |
-| Changelog.md | Paper/ | ✅ aktuell |
+| EBC_paper_v3_draft.md | Paper/ | ⚠️ Vorgänger von v3 |
+| **EBC_paper_v3.md** | Paper/ | ✅ **aktueller Stand (Patches applied)** |
+| EBC_paper_v3_patches.md | Paper/ | 📋 Änderungsprotokoll v3-draft → v3 |
+| Changelog.md | Paper/ | 🔲 auf v3 zu aktualisieren |
 | ebc_physical.py | Numerik/ | ✅ aktuell |
 | ebc_bao_fit.py | Numerik/ | ✅ 1-Par-Fit |
-| ebc_bao_fit2.py | Numerik/ | ✅ neu (2026-04-24) — 2-Par-Fit |
-| ebc_bao_fit.png | Numerik/Ergebnisse/ | ✅ vorhanden |
-| ebc_bao_fit2.png | Numerik/Ergebnisse/ | ✅ neu (2026-04-24) |
-| EBC_BAO_Check_Ergebnisse.md | Erweiterungen/ | ✅ vorhanden |
-| EBC_pandoc_template.tex | Build/ | ✅ vorhanden |
-| EBC-Session-Kontext.md | Kontext/ | ✅ diese Datei |
+| ebc_bao_fit2.py | Numerik/ | ✅ 2-Par-Fit (fest r_d) |
+| **ebc_bao_fit3.py** | Numerik/ | ✅ **3-Par-Fit (Aubourg)** |
+| ebc_bao_fit.png | Numerik/Ergebnisse/ | ✅ |
+| ebc_bao_fit2.png | Numerik/Ergebnisse/ | ✅ |
+| ebc_bao_fit3.png | Numerik/Ergebnisse/ | ✅ neu |
+| ebc_joint_fit.py | Numerik/ | 🔲 nächster Chat |
+| EBC-Session-Kontext.md | Kontext/ | ✅ diese Datei (aktualisiert) |
 
 ---
 
-## 12. Wie neue Sessions starten
+## 11. Wie neuen Chat starten
 
-1. Diese Datei + EBC_paper_v3_draft.md hochladen
-2. ebc_bao_fit2.py hochladen (für 3-Par-Fortsetzung)
-3. ggf. ebc_physical.py hochladen (für numerische Fortsetzungen)
-4. Einstieg: *"Wir setzen EBC-Arbeit fort — Kontext in hochgeladenen Dateien."*
-5. Erstes Ziel benennen
+**Upload (Pflicht):**
+- EBC-Session-Kontext.md (diese Datei)
+- EBC_paper_v3.md (aktueller Paper-Stand)
+- ebc_bao_fit3.py (als Strukturvorlage für ebc_joint_fit.py)
 
-**Nächstes Ziel:** 3-Parameter-Fit (H₀, Ω_m, r_d) mit Aubourg-Formel.
+**Upload (je nach Bedarf):**
+- ebc_physical.py (falls Zeitintegrale/Weltalter relevant)
+
+**Einstiegssatz:**
+> "Wir setzen EBC-Arbeit fort — Kontext in hochgeladenen Dateien.
+> Nächstes Ziel: Joint-Fit BAO + SNe Ia + CMB θ_* (Section 8, Item 3d).
+> Bricht die (H₀, r_d)-Degeneration aus 3c und liefert für Paper v3
+> ein schärferes H₀. Bitte zuerst kurz den Plan skizzieren — welche
+> Datenquellen, welche Likelihood-Kombination, welche Annahmen —
+> bevor Du anfängst zu rechnen."
+
+**Hintergrund für Claude:** Wolfgang hat keinen Physik-Hintergrund und
+kann Rechenschritte nicht unabhängig prüfen. Methodische Annahmen daher
+vor dem Ausführen erklären, Caveats sichtbar machen, kritisch statt
+enthusiastisch bleiben.
